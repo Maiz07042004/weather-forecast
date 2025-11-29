@@ -4,7 +4,7 @@ class DashboardService:
     def __init__(self, repo: WeatherRepositoryPort):
         self.repo = repo
 
-    def get_charts_data(self, daily_limit: int = 30):
+    def get_charts_data(self, daily_limit: int = 360):
         return {
             # 1. Dữ liệu Ngày -> Vẽ Line, Scatter, Histogram (Daily)
             "daily_series": self.repo.get_daily_series(limit=daily_limit),
@@ -13,7 +13,7 @@ class DashboardService:
             "weekly_series": self.repo.get_aggregated_series(granularity='W', limit=52),
             
             # 3. Dữ liệu Tháng -> Vẽ Trend/Seasonal (Monthly)
-            "monthly_series": self.repo.get_aggregated_series(granularity='M', limit=24)
+            "monthly_series": self.repo.get_aggregated_series(granularity='ME', limit=24)
         }
 
     def get_correlation(self):

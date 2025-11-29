@@ -20,7 +20,7 @@ class WeatherAggregateORM(Base):
     __tablename__ = "weather_aggregates"
     id = Column(Integer, primary_key=True)
     date = Column(Date)
-    granularity = Column(String) # 'W' hoặc 'M'
+    granularity = Column(String) # 'W' hoặc 'ME'
     
     # Các chỉ số trung bình/tổng
     temp_max_avg = Column(Float)

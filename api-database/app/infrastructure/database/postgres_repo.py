@@ -67,20 +67,10 @@ class WeatherRepository(WeatherRepositoryPort):
         if not pred:
             return None
 
-        # Logic map mã code sang text hiển thị
-        w_code = cluster.predicted_code if cluster else -1
-        w_desc = "Không rõ"
-        
-        # Mapping đơn giản (Bạn có thể mở rộng)
-        if w_code == 1: w_desc = "Nắng đẹp/Có mây"
-        elif w_code == 2: w_desc = "Sương mù"
-        elif w_code == 3: w_desc = "Mưa phùn"
-        elif w_code == 5: w_desc = "Mưa"
-        elif w_code >= 9: w_desc = "Giông bão"
         
         return ForecastSummary(
             forecast_date=pred.forecast_date,
             predicted_temp=pred.predicted_temp,
-            weather_type=w_desc,
-            weather_code=w_code
+
+            weather_code=cluster.predicted_code
         )

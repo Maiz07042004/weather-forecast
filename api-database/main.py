@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from dotenv import load_dotenv
@@ -26,10 +27,16 @@ def get_service(db: Session = Depends(get_db)):
     return DashboardService(repo)
 
 app = FastAPI(title="Weather Dashboard API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # API 1: Lấy toàn bộ dữ liệu vẽ biểu đồ (Line/Scatter/Trend/Seasonal)
 @app.get("/api/dashboard/charts")
-def get_charts(days: int = 30, service: DashboardService = Depends(get_service)):
+def get_charts(days: int = 360, service: DashboardService = Depends(get_service)):
     """
     Trả về 3 bộ dữ liệu:
     - daily_series: Để vẽ Line, Scatter, Histogram chi tiết ngày.
@@ -51,6 +58,13 @@ def get_forecast(service: DashboardService = Depends(get_service)):
         return {"status": "No forecast available"}
     return data
 
+# @app.get("/api/dashboard/charts/resample")
+# def get_resampled_charts(granularity: str = 'M', limit: int = 12, service: DashboardService = Depends(get_service)):
+#     """
+#     Lấy dữ liệu đã được resample theo chu kỳ (M: Monthly, W: Weekly)
+#     Dùng để vẽ Line Chart/Seasonal Chart với độ mượt cao hơn.
+#     """
+#     return service.(granularity=granularity, limit=limit)
 if __name__ == "__main__":
     import uvicorn
     # Chạy port 8004

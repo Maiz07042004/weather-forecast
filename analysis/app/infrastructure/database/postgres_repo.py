@@ -14,28 +14,50 @@ class PostgresAnalysisRepository(AnalysisRepositoryPort):
     def get_raw_data(self) -> pd.DataFrame:
         query = self.session.query(WeatherRawORM)
         try:
+            pd.read_sql(query.statement, self.session.bind).to_csv("debug_raw_data.csv")  # Debug: Xuất dữ liệu thô ra file CSV
             # Dùng pandas đọc trực tiếp từ SQL connection
-            return pd.read_sql(query.statement, self.session.bind)
+            return pd.read_sql(query.statement, self.session.bind)         
         except Exception as e:
             print(f"[Repo Error] Reading raw data: {e}")
             return pd.DataFrame()
 
     def save_aggregates(self, data: List[WeatherAggregate]) -> None:
         try:
+            count_update = 0
+            count_insert = 0
+            
             for item in data:
-                orm_obj = WeatherAggregateORM(
-                    date=item.date,
-                    granularity=item.granularity,
-                    temp_max_avg=item.temp_max_avg,
-                    temp_min_avg=item.temp_min_avg,
-                    rain_sum=item.rain_sum,
-                    humidity_avg=item.humidity_avg,
-                    wind_speed_max=item.wind_speed_max,
-                    radiation_sum=item.radiation_sum
-                )
-                self.session.merge(orm_obj) # Upsert
+                # 1. Tìm xem bản ghi này đã có trong DB chưa (dựa trên Unique Key: date + granularity)
+                existing = self.session.query(WeatherAggregateORM).filter_by(
+                    date=item.date, 
+                    granularity=item.granularity
+                ).first()
+
+                if existing:
+                    # 2. Nếu CÓ -> Cập nhật số liệu
+                    existing.temp_max_avg = item.temp_max_avg
+                    existing.temp_min_avg = item.temp_min_avg
+                    existing.rain_sum = item.rain_sum
+                    existing.humidity_avg = item.humidity_avg
+                    existing.wind_speed_max = item.wind_speed_max
+                    existing.radiation_sum = item.radiation_sum
+                    count_update += 1
+                else:
+                    # 3. Nếu KHÔNG -> Tạo mới
+                    new_obj = WeatherAggregateORM(
+                        date=item.date,
+                        granularity=item.granularity,
+                        temp_max_avg=item.temp_max_avg,
+                        temp_min_avg=item.temp_min_avg,
+                        rain_sum=item.rain_sum,
+                        humidity_avg=item.humidity_avg,
+                        wind_speed_max=item.wind_speed_max,
+                        radiation_sum=item.radiation_sum
+                    )
+                    self.session.add(new_obj)
+                    count_insert += 1
             self.session.commit()
-            print(f"--- [DB] Saved {len(data)} aggregates ---")
+            print(f"--- [DB] Saved {count_insert} new aggregates, updated {count_update} existing aggregates ---")
         except Exception as e:
             self.session.rollback()
             print(f"[Repo Error] Saving aggregates: {e}")

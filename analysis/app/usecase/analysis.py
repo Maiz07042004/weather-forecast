@@ -41,12 +41,12 @@ class AnalysisService:
                 item = WeatherAggregate(
                     date=date_idx.date(),
                     granularity=freq,
-                    temp_max_avg=float(row.get('temp_max', 0)),
-                    temp_min_avg=float(row.get('temp_min', 0)),
-                    rain_sum=float(row.get('rain_sum', 0)),
-                    humidity_avg=float(row.get('humidity_max', 0)),
-                    wind_speed_max=float(row.get('wind_speed_max', 0)),
-                    radiation_sum=float(row.get('radiation_sum', 0))
+                    temp_max_avg=round(float(row.get('temp_max', 0)), 2),
+                    temp_min_avg=round(float(row.get('temp_min', 0)), 2),
+                    rain_sum=round(float(row.get('rain_sum', 0)), 2),
+                    humidity_avg=round(float(row.get('humidity_max', 0)), 2),
+                    wind_speed_max=round(float(row.get('wind_speed_max', 0)), 2),
+                    radiation_sum=round(float(row.get('radiation_sum', 0)), 2)
                 )
                 domain_list.append(item)
             

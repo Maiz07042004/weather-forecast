@@ -6,6 +6,7 @@ from typing import Optional, Dict, Any
 @dataclass
 class DailyDataPoint:
     date: date
+    weather_code:int
     temp_max: float
     humidity_max: float
     rain_sum: float

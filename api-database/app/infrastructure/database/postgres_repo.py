@@ -24,6 +24,7 @@ class WeatherRepository(WeatherRepositoryPort):
         for row in query.all():
             results.append(DailyDataPoint(
                 date=row.date,
+                weather_code=row.weather_code,
                 temp_max=row.temp_max,
                 humidity_max=row.humidity_max,
                 rain_sum=row.rain_sum,

@@ -7,6 +7,7 @@ Base = declarative_base()
 class WeatherRawORM(Base):
     __tablename__ = "weather_daily"
     date = Column(Date, primary_key=True)
+    weather_code = Column(Integer)
     temp_max = Column(Float)
     temp_min = Column(Float)
     humidity_max = Column(Float)

@@ -9,7 +9,6 @@ class PostgresClusteringRepository(WeatherRepositoryPort):
         self.session = session
 
     def get_latest_days(self, limit: int) -> pd.DataFrame:
-        # Lấy N ngày mới nhất (DESC) -> Đảo ngược (ASC)
         query = self.session.query(WeatherRawORM)\
                     .order_by(WeatherRawORM.date.desc())\
                     .limit(limit)\
@@ -26,7 +25,6 @@ class PostgresClusteringRepository(WeatherRepositoryPort):
             orm_obj = ClusteringORM(
                 forecast_date=result.forecast_date,
                 predicted_code=result.predicted_weather_code,
-                # description=result.weather_description, <-- Đã xóa
                 based_on_last_date=result.based_on_last_date,
                 features_used=result.features_used
             )

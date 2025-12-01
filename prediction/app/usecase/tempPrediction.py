@@ -18,20 +18,21 @@ class PredictionService:
         self.WINDOW_SIZE = 7
 
     def predict_next_day(self) -> PredictionResult:
-        # 1. Lấy dữ liệu
         df = self.repo.get_latest_days(limit=self.WINDOW_SIZE)
         
         if len(df) < self.WINDOW_SIZE:
             raise ValueError(f"Not enough data. Need {self.WINDOW_SIZE} days, got {len(df)}")
 
-        # 2. Pre-process
+        # Pre-process
         df_features = df[self.FEATURES].fillna(0)
+        
+        # Scikit-learn cần input dạng numpy array 2D
         input_vector = df_features.values.flatten().tolist()
 
-        # 3. Predict
+        # Predict
         predicted_val = self.model_handler.predict(input_vector)
 
-        # 4. Tạo kết quả Domain Object
+        # Tạo kết quả Domain Object
         last_date = pd.to_datetime(df['date'].iloc[-1]).date()
         forecast_date = last_date + timedelta(days=1)
 
@@ -42,7 +43,7 @@ class PredictionService:
             features_used=self.FEATURES
         )
 
-        # [MỚI] 5. Lưu vào Database
+        # Lưu vào Database
         self.repo.save_prediction(result)
 
         return result

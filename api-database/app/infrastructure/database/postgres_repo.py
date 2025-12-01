@@ -15,7 +15,6 @@ class WeatherRepository(WeatherRepositoryPort):
         self.session = session
 
     def get_daily_series(self, limit: int = 365) -> list[DailyDataPoint]:
-        """Lấy dữ liệu thô theo ngày (cho Line Chart, Scatter Daily)"""
         query = self.session.query(WeatherRawORM)\
                     .order_by(desc(WeatherRawORM.date))\
                     .limit(limit)
@@ -31,10 +30,9 @@ class WeatherRepository(WeatherRepositoryPort):
                 wind_speed_max=row.wind_speed_max,
                 radiation_sum=row.radiation_sum
             ))
-        return results[::-1] # Đảo ngược: Quá khứ -> Hiện tại
+        return results[::-1] # Đảo ngược: Quá khứ sang Hiện tại
 
     def get_aggregated_series(self, granularity: str, limit: int = 24) -> list[AggregateDataPoint]:
-        """Lấy dữ liệu tổng hợp (cho Trend, Seasonal)"""
         query = self.session.query(WeatherAggregateORM)\
                     .filter(WeatherAggregateORM.granularity == granularity)\
                     .order_by(desc(WeatherAggregateORM.date))\
@@ -52,7 +50,6 @@ class WeatherRepository(WeatherRepositoryPort):
         return results[::-1]
 
     def get_correlation_matrix(self) -> CorrelationData:
-        """Lấy ma trận tương quan mới nhất"""
         record = self.session.query(AnalysisCorrelationORM)\
                      .order_by(desc(AnalysisCorrelationORM.id))\
                      .first()
@@ -61,17 +58,14 @@ class WeatherRepository(WeatherRepositoryPort):
         return CorrelationData(matrix={})
 
     def get_latest_forecast(self) -> ForecastSummary:
-        """Kết hợp dự báo Nhiệt độ và Phân loại thời tiết"""
         pred = self.session.query(PredictionORM).order_by(desc(PredictionORM.id)).first()
         cluster = self.session.query(ClusteringORM).order_by(desc(ClusteringORM.id)).first()
         
         if not pred:
             return None
-
         
         return ForecastSummary(
             forecast_date=pred.forecast_date,
             predicted_temp=pred.predicted_temp,
-
             weather_code=cluster.predicted_code
         )

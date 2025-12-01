@@ -4,7 +4,6 @@ from datetime import datetime
 
 Base = declarative_base()
 
-# Bảng Raw (Chỉ đọc)
 class WeatherRawORM(Base):
     __tablename__ = "weather_daily"
     date = Column(Date, primary_key=True)
@@ -23,7 +22,6 @@ class ClusteringORM(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     created_at = Column(DateTime, default=datetime.now)
-    
     forecast_date = Column(Date)
     predicted_code = Column(Integer)
     based_on_last_date = Column(Date)

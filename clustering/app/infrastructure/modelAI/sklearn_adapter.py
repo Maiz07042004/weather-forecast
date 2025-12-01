@@ -24,9 +24,7 @@ class SklearnClassifierAdapter(ModelHandlerPort):
         if not self.model:
             raise Exception("Classifier model is not loaded.")
         
-        # Scikit-learn input: (1, n_features)
         np_input = np.array(input_vector).reshape(1, -1)
         result = self.model.predict(np_input)
         
-        # Kết quả trả về là mảng [Label], lấy phần tử đầu tiên
         return int(result[0])

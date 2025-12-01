@@ -2,6 +2,7 @@ import { Cloud, Droplets, Wind, Gauge } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface WeatherHeaderProps {
+  date: string;
   temp_max: number;
   humidity_max: number;
   wind_speed_max: number;
@@ -9,6 +10,7 @@ interface WeatherHeaderProps {
 }
 
 export const WeatherHeader = ({
+  date,
   temp_max,
   humidity_max,
   wind_speed_max,
@@ -20,9 +22,7 @@ export const WeatherHeader = ({
         <h1 className="text-5xl lg:text-6xl font-bold mb-3">
           <span className="gradient-text">Weather Analytics</span>
         </h1>
-        <p className="text-lg text-muted-foreground">
-          Comprehensive weather data visualization and analysis
-        </p>
+        <p className="text-lg text-muted-foreground">{date}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

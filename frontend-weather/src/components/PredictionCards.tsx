@@ -74,9 +74,10 @@ export const PredictionCards = ({ prediction }: PredictionCardsProps) => {
 
             <div className="p-4 rounded-xl bg-gradient-to-br from-accent/5 to-transparent">
               <p className="text-sm text-muted-foreground mb-2">
-                Thời tiết đẹp
+                Based on predicted rain sum and wind speed levels, the weather
+                is expected to be
               </p>
-              <p className="text-3xl font-bold text-foreground">Hehe</p>
+              <p className="text-3xl font-bold text-foreground">Tomorrow</p>
             </div>
           </div>
         </div>

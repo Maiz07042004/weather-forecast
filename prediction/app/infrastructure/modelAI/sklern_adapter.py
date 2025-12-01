@@ -24,7 +24,6 @@ class SklearnModelAdapter(ModelHandlerPort):
         if not self.model:
             raise Exception("Model is not loaded.")
         
-        # Scikit-learn cần input dạng numpy array 2D
         np_input = np.array(input_vector).reshape(1, -1)
         result = self.model.predict(np_input)
         return float(result[0])

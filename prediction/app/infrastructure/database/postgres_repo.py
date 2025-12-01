@@ -21,7 +21,6 @@ class PostgresPredictionRepository(WeatherRepositoryPort):
             print(f"[Repo Error] {e}")
             return pd.DataFrame()
 
-    # [MỚI] Hàm lưu kết quả dự báo
     def save_prediction(self, result: PredictionResult) -> None:
         try:
             orm_obj = PredictionORM(

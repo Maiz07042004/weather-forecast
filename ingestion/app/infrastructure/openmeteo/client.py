@@ -26,29 +26,20 @@ class OpenMeteoClient(WeatherApiClientPort):
     
     if not json_data: return []
 
-    # Logic Zipping (Chuyển cột thành dòng)
+    # Chuyển cột thành dòng
     results = []
     dates = json_data["time"]
     for i in range(len(dates)):
-      # Chuyển đổi JSON -> Domain Entity
       entity = WeatherDaily(
         date=datetime.strptime(dates[i], "%Y-%m-%d").date(),
         weather_code=json_data["weather_code"][i],
-        
-        # Nhiệt độ
         temp_max=json_data["temperature_2m_max"][i],
         temp_min=json_data["temperature_2m_min"][i],
-        
-        # Độ ẩm (QUAN TRỌNG: Cần map đúng key từ API)
         humidity_max=json_data["relative_humidity_2m_max"][i],
         humidity_min=json_data["relative_humidity_2m_min"][i],
-        
-        # Mưa & Gió
         rain_sum=json_data["rain_sum"][i],
         wind_speed_max=json_data["wind_speed_10m_max"][i],
         wind_direction=json_data["wind_direction_10m_dominant"][i],
-        
-        # Các chỉ số nâng cao cho dự đoán/heatmap
         radiation_sum=json_data["shortwave_radiation_sum"][i],
         evapotranspiration=json_data["et0_fao_evapotranspiration"][i]
       )

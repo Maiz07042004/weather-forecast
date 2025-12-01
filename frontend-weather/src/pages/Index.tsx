@@ -78,6 +78,7 @@ const Index = () => {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="animate-fade-in">
           <WeatherHeader
+            date={latestData.date}
             temp_max={latestData.temp_max}
             humidity_max={latestData.humidity_max}
             wind_speed_max={latestData.wind_speed_max}

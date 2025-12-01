@@ -27,7 +27,7 @@ class AggregateDataPoint:
 class ForecastSummary:
     forecast_date: date
     predicted_temp: float
-    weather_code: int        # Mã gốc (để Frontend hiện icon)
+    weather_code: int 
 
 # Dữ liệu Correlation
 @dataclass

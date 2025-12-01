@@ -5,6 +5,6 @@ from typing import List
 @dataclass
 class ClusteringResult:
     forecast_date: date
-    predicted_weather_code: int   # Mã thời tiết dự báo (VD: 1, 3, 61...)
+    predicted_weather_code: int
     based_on_last_date: date
     features_used: List[str]

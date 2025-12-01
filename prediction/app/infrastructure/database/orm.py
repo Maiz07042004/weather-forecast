@@ -4,7 +4,6 @@ from datetime import datetime
 
 Base = declarative_base()
 
-# Mapping bảng Raw Data (Chỉ đọc)
 class WeatherRawORM(Base):
     __tablename__ = "weather_daily"
     date = Column(Date, primary_key=True)
@@ -20,8 +19,8 @@ class PredictionORM(Base):
     __tablename__ = "weather_predictions"
 
     id = Column(Integer, primary_key=True, index=True)
-    created_at = Column(DateTime, default=datetime.now) # Thời điểm chạy dự báo
+    created_at = Column(DateTime, default=datetime.now)
     forecast_date = Column(Date)
     predicted_temp = Column(Float)
     based_on_last_date = Column(Date)
-    features_used = Column(JSON) # Lưu danh sách feature dưới dạng JSON Array
+    features_used = Column(JSON)

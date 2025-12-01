@@ -14,7 +14,7 @@ class PostgresAnalysisRepository(AnalysisRepositoryPort):
     def get_raw_data(self) -> pd.DataFrame:
         query = self.session.query(WeatherRawORM)
         try:
-            pd.read_sql(query.statement, self.session.bind).to_csv("debug_raw_data.csv")  # Debug: Xuất dữ liệu thô ra file CSV
+            pd.read_sql(query.statement, self.session.bind).to_csv("debug_raw_data.csv")
             # Dùng pandas đọc trực tiếp từ SQL connection
             return pd.read_sql(query.statement, self.session.bind)         
         except Exception as e:
@@ -27,14 +27,12 @@ class PostgresAnalysisRepository(AnalysisRepositoryPort):
             count_insert = 0
             
             for item in data:
-                # 1. Tìm xem bản ghi này đã có trong DB chưa (dựa trên Unique Key: date + granularity)
                 existing = self.session.query(WeatherAggregateORM).filter_by(
                     date=item.date, 
                     granularity=item.granularity
                 ).first()
 
-                if existing:
-                    # 2. Nếu CÓ -> Cập nhật số liệu
+                if existing:                    
                     existing.temp_max_avg = item.temp_max_avg
                     existing.temp_min_avg = item.temp_min_avg
                     existing.rain_sum = item.rain_sum
@@ -43,7 +41,6 @@ class PostgresAnalysisRepository(AnalysisRepositoryPort):
                     existing.radiation_sum = item.radiation_sum
                     count_update += 1
                 else:
-                    # 3. Nếu KHÔNG -> Tạo mới
                     new_obj = WeatherAggregateORM(
                         date=item.date,
                         granularity=item.granularity,
@@ -64,7 +61,6 @@ class PostgresAnalysisRepository(AnalysisRepositoryPort):
 
     def save_correlation(self, data: CorrelationMatrix) -> None:
         try:
-            # Clean NaN for JSON
             clean_matrix = json.loads(json.dumps(data.matrix).replace('NaN', 'null'))
             orm_obj = CorrelationORM(matrix=clean_matrix)
             self.session.add(orm_obj)

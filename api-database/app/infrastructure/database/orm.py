@@ -22,8 +22,6 @@ class WeatherAggregateORM(Base):
     id = Column(Integer, primary_key=True)
     date = Column(Date)
     granularity = Column(String) # 'W' hoặc 'ME'
-    
-    # Các chỉ số trung bình/tổng
     temp_max_avg = Column(Float)
     rain_sum = Column(Float)
     humidity_avg = Column(Float)

@@ -4,10 +4,10 @@ from datetime import datetime
 
 Base = declarative_base()
 
-# 1. Bảng Raw (Mapping với bảng của Ingestion Service - Chỉ đọc)
 class WeatherRawORM(Base):
   __tablename__ = "weather_daily"
   date = Column(Date, primary_key=True)
+  weather_code = Column(Integer)
   temp_max = Column(Float)
   temp_min = Column(Float)
   humidity_max = Column(Float)
@@ -16,7 +16,6 @@ class WeatherRawORM(Base):
   radiation_sum = Column(Float)
   evapotranspiration = Column(Float)
 
-# 2. Bảng Aggregate (Ghi)
 class WeatherAggregateORM(Base):
   __tablename__ = "weather_aggregates"
 
@@ -33,7 +32,6 @@ class WeatherAggregateORM(Base):
 
   __table_args__ = (UniqueConstraint('date', 'granularity', name='uq_date_gran_analysis'),)
 
-# 3. Bảng Correlation (Ghi)
 class CorrelationORM(Base):
   __tablename__ = "analysis_correlations"
 

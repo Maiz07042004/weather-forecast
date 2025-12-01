@@ -9,20 +9,12 @@ class WeatherORM(Base):
 
   date = Column(Date, primary_key=True, index=True)
   weather_code = Column(Integer)
-  
-  # Nhiệt độ
   temp_max = Column(Float)
   temp_min = Column(Float)
-  
-  # Độ ẩm (MỚI)
   humidity_max = Column(Float) 
   humidity_min = Column(Float)
-  
-  # Mưa & Gió
   rain_sum = Column(Float)
   wind_speed_max = Column(Float)
-  wind_direction = Column(Float) # Hướng gió chủ đạo (độ)
-  
-  # Năng lượng & Bốc hơi
+  wind_direction = Column(Float)
   radiation_sum = Column(Float)       # MJ/m²
   evapotranspiration = Column(Float)  # mm

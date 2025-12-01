@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Dict, Any
 
-# Object đại diện cho dữ liệu tổng hợp (Trend/Seasonal)
 @dataclass
 class WeatherAggregate:
     date: date
@@ -14,7 +13,6 @@ class WeatherAggregate:
     wind_speed_max: float
     radiation_sum: float
 
-# Object đại diện cho ma trận tương quan
 @dataclass
 class CorrelationMatrix:
     matrix: Dict[str, Any]

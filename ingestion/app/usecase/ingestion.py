@@ -7,9 +7,8 @@ class WeatherIngestionService:
         self.repo = repo
 
     def execute(self, start_date: str, end_date: str):
-        print(f"--- Bắt đầu Ingestion Hexagonal ({start_date} -> {end_date}) ---")
+        print(f"--- Bắt đầu Ingestion ({start_date} -> {end_date}) ---")
         
-        # 1. Gọi Port API để lấy dữ liệu (Domain Objects)
         data = self.api_client.fetch_daily_data(start_date, end_date)
         
         if not data:
@@ -18,7 +17,6 @@ class WeatherIngestionService:
 
         print(f"-> Đã lấy được {len(data)} bản ghi từ API.")
 
-        # 2. Gọi Port Repository để lưu
         self.repo.save_bulk(data)
         
         print("-> Ingestion hoàn tất.")

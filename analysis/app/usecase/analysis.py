@@ -8,8 +8,7 @@ class AnalysisService:
 
     def run_analysis(self):
         print(">>> [UseCase] Starting Analysis ETL...")
-        
-        # 1. Get Data
+
         df = self.repo.get_raw_data()
         if df.empty:
             print(">>> [UseCase] No data found.")
@@ -19,11 +18,9 @@ class AnalysisService:
             df['date'] = pd.to_datetime(df['date'])
             df.set_index('date', inplace=True)
 
-        # 2. Transform: Aggregates (Weekly & Monthly)
         granularities = {'W': 'Tuần', 'ME': 'Tháng'}
         
         for freq, name in granularities.items():
-            # Chỉ aggregate các cột tồn tại
             agg_rules = {
                 'temp_max': 'mean', 'temp_min': 'mean',
                 'rain_sum': 'sum', 'humidity_max': 'mean',
@@ -35,25 +32,22 @@ class AnalysisService:
 
             agg_df = df.resample(freq).agg(valid_rules).dropna()
             
-            # Convert DF -> Domain Objects
             domain_list = []
             for date_idx, row in agg_df.iterrows():
                 item = WeatherAggregate(
                     date=date_idx.date(),
                     granularity=freq,
-                    temp_max_avg=float(row.get('temp_max', 0)),
-                    temp_min_avg=float(row.get('temp_min', 0)),
-                    rain_sum=float(row.get('rain_sum', 0)),
-                    humidity_avg=float(row.get('humidity_max', 0)),
-                    wind_speed_max=float(row.get('wind_speed_max', 0)),
-                    radiation_sum=float(row.get('radiation_sum', 0))
+                    temp_max_avg=round(float(row.get('temp_max', 0)), 2),
+                    temp_min_avg=round(float(row.get('temp_min', 0)), 2),
+                    rain_sum=round(float(row.get('rain_sum', 0)), 2),
+                    humidity_avg=round(float(row.get('humidity_max', 0)), 2),
+                    wind_speed_max=round(float(row.get('wind_speed_max', 0)), 2),
+                    radiation_sum=round(float(row.get('radiation_sum', 0)), 2)
                 )
                 domain_list.append(item)
             
-            # Save via Port
             self.repo.save_aggregates(domain_list)
 
-        # 3. Transform: Correlation
         corr_cols = ['temp_max', 'humidity_max', 'rain_sum', 'wind_speed_max', 'radiation_sum']
         valid_cols = [c for c in corr_cols if c in df.columns]
         

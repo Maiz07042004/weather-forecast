@@ -1,0 +1,136 @@
+version: "3.8"
+
+services:
+  # --- DATABASE ---
+  postgres_db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "12345"
+      POSTGRES_DB: weather_db
+    ports:
+      - "54321:5432" # Mở cổng DB để bạn dùng DBeaver/Navicat kết nối vào
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - weather-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- BACKEND SERVICES ---
+
+  ingestion:
+    build: ./ingestion
+    restart: on-failure
+    ports:
+      - "8001:8000"
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=12345
+      - DB_NAME=weather_db
+    networks:
+      - weather-network
+    depends_on:
+      postgres_db:
+        condition: service_healthy
+
+  analysis:
+    build: ./analysis
+    restart: on-failure
+    ports:
+      - "8002:8001"
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PASSWORD=12345
+      - DB_NAME=weather_db
+    networks:
+      - weather-network
+    depends_on:
+      - postgres_db
+      - ingestion
+
+  prediction:
+    build: ./prediction
+    restart: on-failure
+    ports:
+      - "8003:8002"
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PASSWORD=12345
+      - DB_NAME=weather_db
+    networks:
+      - weather-network
+    depends_on:
+      - postgres_db
+      - ingestion
+
+  clustering:
+    build: ./clustering
+    restart: on-failure
+    ports:
+      - "8004:8003"
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PASSWORD=12345
+      - DB_NAME=weather_db
+    networks:
+      - weather-network
+    depends_on:
+      - postgres_db
+      - ingestion
+
+  api-database:
+    build: ./api-database
+    restart: on-failure
+    ports:
+      - "8005:8004"
+    environment:
+      - DB_HOST=postgres_db
+      - DB_PASSWORD=12345
+      - DB_NAME=weather_db
+    networks:
+      - weather-network
+    depends_on:
+      - postgres_db
+      - ingestion
+      - analysis
+      - prediction
+      - clustering
+
+  # --- FRONTEND ---
+  web:
+    build: ./frontend-weather
+    ports:
+      - "3000:80"
+    networks:
+      - weather-network
+    depends_on:
+      - api-database
+
+  # --- GATEWAY (NGINX) ---
+  gateway:
+    image: nginx:alpine
+    ports:
+      - "80:80" # Cổng chính thức
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - weather-network
+    depends_on:
+      - web
+      - ingestion
+      - analysis
+      - prediction
+
+volumes:
+  postgres_data:
+
+networks:
+  weather-network:
+    driver: bridge

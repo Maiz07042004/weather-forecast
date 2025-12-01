@@ -9,11 +9,25 @@ from app.infrastructure.database.orm import Base
 from app.infrastructure.database.postgres_repo import WeatherRepository
 from app.usecase.dashboardService import DashboardService
 
-# 1. Config
+# 1. Cấu hình
 load_dotenv()
-DB_URL = os.getenv("DB_URL", "postgresql://postgres:12345@localhost:5432/weather_db")
 
-# 2. Database Setup
+# CẤU HÌNH POSTGRESQL
+# Định dạng: postgresql://username:password@host:port/database_name
+# Cấu hình các tham số kết nối
+DB_HOST = os.getenv("DB_HOST", "localhost")  # Lấy từ biến môi trường hoặc dùng localhost
+DB_PORT = os.getenv("DB_PORT", 5432)  # Mặc định là 5432 cho PostgreSQL
+DB_USER = os.getenv("DB_USER", "postgres")  # Người dùng (user)
+DB_PASSWORD = os.getenv("DB_PASSWORD", "12345")  # Mật khẩu (password)
+DB_NAME = os.getenv("DB_NAME", "weather_db")  # Tên cơ sở dữ liệu
+
+# Tạo URL kết nối theo từng phần
+DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+LAT = 51.5074  # London
+LON = -0.1278
+
+# 2. Setup Database Engine
 engine = create_engine(DB_URL)
 SessionLocal = sessionmaker(bind=engine)
 

@@ -1,5 +1,6 @@
+const domain = "http://localhost";
 export const getChartDays = async () => {
-  const response = await fetch(`http://localhost:8004/api/dashboard/charts`);
+  const response = await fetch(`${domain}/api/db/api/dashboard/charts`);
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
@@ -12,9 +13,7 @@ export const getChartDays = async () => {
 };
 
 export const getCorrelations = async () => {
-  const response = await fetch(
-    `http://localhost:8004/api/dashboard/correlation`
-  );
+  const response = await fetch(`${domain}/api/db/api/dashboard/correlation`);
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }
@@ -23,7 +22,7 @@ export const getCorrelations = async () => {
 };
 
 export const getForecast = async () => {
-  const response = await fetch(`http://localhost:8004/api/dashboard/forecast`);
+  const response = await fetch(`${domain}/api/db/api/dashboard/forecast`);
   if (!response.ok) {
     throw new Error("Failed to fetch data");
   }

@@ -18,8 +18,15 @@ load_dotenv()
 
 # CẤU HÌNH POSTGRESQL
 # Định dạng: postgresql://username:password@host:port/database_name
-# Nếu không tìm thấy biến môi trường, sẽ dùng chuỗi kết nối mặc định bên dưới
-DB_URL = os.getenv("DB_URL", "postgresql://postgres:12345@localhost:5432/weather_db") 
+# Cấu hình các tham số kết nối
+DB_HOST = os.getenv("DB_HOST", "localhost")  # Lấy từ biến môi trường hoặc dùng localhost
+DB_PORT = os.getenv("DB_PORT", 5432)  # Mặc định là 5432 cho PostgreSQL
+DB_USER = os.getenv("DB_USER", "postgres")  # Người dùng (user)
+DB_PASSWORD = os.getenv("DB_PASSWORD", "12345")  # Mật khẩu (password)
+DB_NAME = os.getenv("DB_NAME", "weather_db")  # Tên cơ sở dữ liệu
+
+# Tạo URL kết nối theo từng phần
+DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 LAT = 51.5074  # London
 LON = -0.1278

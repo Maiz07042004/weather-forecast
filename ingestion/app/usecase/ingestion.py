@@ -18,6 +18,7 @@ class WeatherIngestionService:
 
         print(f"-> Đã lấy được {len(data)} bản ghi từ API.")
 
+
         # 2. Gọi Port Repository để lưu
         self.repo.save_bulk(data)
         

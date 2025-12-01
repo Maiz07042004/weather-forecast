@@ -26,6 +26,5 @@ class ClusteringORM(Base):
     
     forecast_date = Column(Date)
     predicted_code = Column(Integer)
-    # description = Column(String)  <-- Đã xóa
     based_on_last_date = Column(Date)
     features_used = Column(JSON)

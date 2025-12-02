@@ -43,7 +43,7 @@ def get_ingestion_service(db_session):
 
 def job_ingestion_5min():
     print("--- [CRON] Bắt đầu Job Ingestion định kỳ ---")
-    db = get_db()
+    db = SessionLocal()
     try:
         service = get_ingestion_service(db)
         
@@ -56,6 +56,10 @@ def job_ingestion_5min():
         )
     except Exception as e:
         print(f"--- [CRON ERROR] {e}")
+    finally:
+        db.close()
+    print("--- [CRON] Kết thúc Job Ingestion định kỳ ---")
+
 
 # Cấu hình FastAPI & Scheduler Lifecycle
 @asynccontextmanager
@@ -67,7 +71,7 @@ async def lifespan(app: FastAPI):
     scheduler.add_job(job_ingestion_5min, 'interval', minutes=5)
     scheduler.start()
 
-    db = get_db()
+    db = SessionLocal()
     try:
         service = get_ingestion_service(db)
         
@@ -80,6 +84,8 @@ async def lifespan(app: FastAPI):
         )
     except Exception as e:
         print(f"--- [CRON ERROR] {e}")
+    finally:
+        db.close()
     
     yield
     
@@ -91,7 +97,7 @@ app = FastAPI(lifespan=lifespan)
 @app.post("/ingest/manual")
 def manual_ingest(start_date: str, end_date: str, background_tasks: BackgroundTasks):
     def task():
-        db = get_db()
+        db = SessionLocal()
         try:
             service = get_ingestion_service(db)
             service.execute(start_date, end_date)

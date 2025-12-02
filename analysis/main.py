@@ -1,4 +1,4 @@
-from fastapi import FastAPI, BackgroundTasks, Depends
+from fastapi import FastAPI, BackgroundTasks, Depends, HTTPException
 from contextlib import asynccontextmanager
 from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import create_engine
